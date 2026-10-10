@@ -23,9 +23,14 @@ the whole tap.
    `Copyosity-aarch64_1.0.3.dmg`, and `spctl -a -t install` answers
    `Unnotarized Developer ID`. Downloading it in a browser therefore needs a
    manual Gatekeeper override.
-3. A cask install sidesteps that: `curl` does not set `com.apple.quarantine`, so
-   Gatekeeper never evaluates the bundle. Homebrew verifies the artifact by
-   SHA-256 instead, which the cask pins per architecture.
+3. What the cask does *not* do is disable Gatekeeper. Measured on the install of
+   `1.0.4-fork1`: the downloaded DMG carries `com.apple.quarantine` (flags `0281`), the
+   installed bundle inherits it (`03c1`), and `spctl -a -t install` answers `rejected`.
+   `open -a` still launched it without a prompt here, most likely because this bundle id at
+   this path had already been approved once on this machine. What the cask buys instead:
+   a SHA-256 pinned per architecture and verified on download, `livecheck`, and
+   `brew upgrade --cask` as the update channel (the fork build ships with the Tauri
+   updater disabled — see below).
 
 ## What the fork build changes
 
