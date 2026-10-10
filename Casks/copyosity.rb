@@ -10,8 +10,11 @@ cask "copyosity" do
   homepage "https://github.com/tayuLuc/copyosity"
 
   livecheck do
-    url "https://github.com/tayuLuc/copyosity/releases/latest"
-    strategy :github_latest
+    url "https://github.com/tayuLuc/copyosity"
+    # Не :github_latest: он читает заголовок Latest-Version, а GitHub считает
+    # суффикс `-fork1` semver-пре-релизом и отдаёт в нём `1.0.4` — livecheck
+    # вечно рапортовал бы «есть новее». Список релизов даёт тег целиком.
+    strategy :github_release
   end
 
   # The fork build has the Tauri updater switched off: it cannot mint minisign
