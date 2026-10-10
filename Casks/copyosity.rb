@@ -22,12 +22,18 @@ cask "copyosity" do
   # signed build over this one. Upgrades happen through this cask.
   auto_updates false
 
-  depends_on macos: ">= :monterey"
+  # Символьная форма, а не ">= :monterey": строковое сравнение brew 7.0.7 помечает
+  # как deprecated и предупреждает при каждой установке (замер 10.10.2026).
+  depends_on macos: :monterey
 
   app "Copyosity.app"
 
+  # Пути измерены на живой установке (10.10.2026), а не угаданы по имени приложения:
+  # данные лежат в каталоге по bundle id, каталога "Copyosity" нет вообще.
   zap trash: [
-    "~/Library/Application Support/Copyosity",
+    "~/Library/Application Support/com.vkovalskii.copyosity",
+    "~/Library/Caches/com.vkovalskii.copyosity",
+    "~/Library/WebKit/com.vkovalskii.copyosity",
     "~/Library/Preferences/com.vkovalskii.copyosity.plist",
     "~/Library/Saved Application State/com.vkovalskii.copyosity.savedState",
   ]
