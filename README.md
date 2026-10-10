@@ -59,6 +59,8 @@ assets have been consumed: new bytes mean a new `-forkN`.
 | --- | --- | --- |
 | `1.0.4-fork1` | `92284ad` on `brew-unsigned` | upstream `main@aad3c2b` + smart-actions cherry-pick + unsigned CI |
 | `1.0.4-fork2` | `cab0f96` on `brew-unsigned` | same code; version aligned across manifests, gate extended |
+| `1.0.4-fork3` | `9ce5616` on `main` | self-update switched to the fork's own channel and key; release line moved to `main` |
+| `1.0.4-fork4` | `7a3bfb6` on `main` | address cleanup: no upstream URL left in a delivery path; mirror script guarded off |
 
 ## Updating
 
