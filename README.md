@@ -46,9 +46,15 @@ the whole tap.
 
 ## Versions
 
+The fork keeps upstream's number and appends `-forkN`, in all four manifests at
+once (`tauri.conf.json`, `package.json`, `Cargo.toml`, `Cargo.lock`) — the fork's
+Config gate fails the build if they disagree. A tag is never re-cut once its
+assets have been consumed: new bytes mean a new `-forkN`.
+
 | Cask version | Build commit | Contents |
 | --- | --- | --- |
-| `1.0.4-fork1` | `8556aea` on `brew-unsigned` | upstream `main@aad3c2b` (1.0.4-dev) + smart-actions + unsigned CI |
+| `1.0.4-fork1` | `92284ad` on `brew-unsigned` | upstream `main@aad3c2b` + smart-actions cherry-pick + unsigned CI |
+| `1.0.4-fork2` | `cab0f96` on `brew-unsigned` | same code; version aligned across manifests, gate extended |
 
 ## Updating
 
