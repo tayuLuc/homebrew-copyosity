@@ -28,9 +28,10 @@ the whole tap.
    installed bundle inherits it (`03c1`), and `spctl -a -t install` answers `rejected`.
    `open -a` still launched it without a prompt here, most likely because this bundle id at
    this path had already been approved once on this machine. What the cask buys instead:
-   a SHA-256 pinned per architecture and verified on download, `livecheck`, and
-   `brew upgrade --cask` as the update channel (the fork build ships with the Tauri
-   updater disabled — see below).
+   a SHA-256 pinned per architecture and verified on download, plus one repeatable
+   install line for a machine that has never seen this repository. It is the *pinned*
+   channel; the rolling one is the app's own updater, and the cask says
+   `auto_updates true` so `brew upgrade` does not roll a self-updated install back.
 
 ## What the fork build changes
 
@@ -39,10 +40,13 @@ the whole tap.
    QR popover. Cherry-picked from `ed-would/copyosity` onto upstream `main`.
 2. `LICENSE` added — upstream declares `"license": "MIT"` in `package.json` but
    ships no license file. Both copyright lines are present.
-3. Ad-hoc signing, no Developer ID, no notarization, no updater artifacts — see
+3. Ad-hoc signing, no Developer ID, no notarization — see
    `docs/FORK-NOTARIZATION.md` in the app repository.
-4. In-app self-update is disabled (`plugins.updater.endpoints = []`), so this
-   build can never replace itself with an upstream-signed artifact.
+4. In-app self-update is on, reading `tayuLuc/copyosity/releases/latest/download/latest.json`
+   and verifying against the fork's own minisign key (`1F02BEF343E06964`), so an
+   upstream-signed build can never replace this one over the wire. The CI Config gate
+   asserts the endpoint belongs to the repository running the workflow and that the
+   pubkey is not upstream's.
 
 ## Versions
 
@@ -58,15 +62,27 @@ assets have been consumed: new bytes mean a new `-forkN`.
 
 ## Updating
 
+Two channels, on purpose:
+
 ```sh
+# rolling — the app itself checks this repo's releases on launch and installs
+# what the fork's minisign key vouches for; nothing to run here
+open -a Copyosity
+
+# pinned — the cask installs the artifact whose sha256 it carries
 brew update
-brew upgrade --cask copyosity
+brew reinstall --cask copyosity   # deliberate return to the pinned build
 ```
 
-To cut a new build: push a version tag to the fork, `.github/workflows/release-fork.yml`
-builds both architectures and publishes the DMGs, then `version` and the two
-`sha256` values in `Casks/copyosity.rb` are updated. `brew livecheck --tap
-tayuLuc/copyosity --casks` reports when the tag and the cask drift apart.
+`auto_updates true` in the cask keeps `brew upgrade --cask` from rolling a
+self-updated install back to the pin.
+
+To cut a new build: merge the feature branch into `main`, bump the version in all four
+manifests, push an annotated `v<version>` tag — `.github/workflows/release-fork.yml`
+builds both architectures, publishes the DMGs plus updater tarballs and `latest.json`,
+then `scripts/sync-cask.sh <version>` rewrites `version` and the two `sha256` values in
+`Casks/copyosity.rb`. `brew livecheck --tap tayuLuc/copyosity --casks` reports when the
+tag and the cask drift apart.
 
 ## Uninstalling
 
