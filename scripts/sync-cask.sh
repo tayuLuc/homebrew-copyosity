@@ -8,9 +8,8 @@
 # `digest` for assets it stored itself), so nothing is downloaded. Falls back to
 # fetching the DMG and hashing it when the field is missing.
 #
-# The cask keeps `version` and `sha256 arm:/intel:` each on a single line so the
-# sed below stays a one-liner — the same constraint deskflow documents in its
-# tap-update workflow.
+# The cask carries `sha256 arm:/intel:` in the two-line aligned form `brew style`
+# wants; the rewrite below accepts a single-line pair too and always emits two lines.
 set -euo pipefail
 
 REPO="${REPO:-tayuLuc/copyosity}"
@@ -43,8 +42,8 @@ X64=$(sha_of x64)
 # молча не меняет файл, но следующий запуск должен быть рабочим, а не «почти»).
 VERSION="$VERSION" ARM="$ARM" X64="$X64" perl -0pi -e '
   s{^  version "[^"]*"}{  version "$ENV{VERSION}"}m or die "no version line in $ARGV\n";
-  s{^  sha256 arm: "[^"]*", intel: "[^"]*"}
-   {  sha256 arm: "$ENV{ARM}", intel: "$ENV{X64}"}m
+  s{^  sha256 arm:\s*"[0-9a-f]{64}",\s*intel: "[0-9a-f]{64}"}
+   {  sha256 arm:   "$ENV{ARM}",\n         intel: "$ENV{X64}"}m
     or die "no sha256 arm/intel line in $ARGV\n";
 ' "$CASK"
 
