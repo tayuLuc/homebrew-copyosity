@@ -1,9 +1,9 @@
 cask "copyosity" do
   arch arm: "aarch64", intel: "x64"
 
-  version "1.0.4-fork7"
-  sha256 arm:   "ae191c2dde19421a3ebc136d92a00001110fe24c17b5a011e5aafc87e208b8e6",
-         intel: "20c867819b02027e24352aaaf6eeaa1ca51a6036f141c6ad5bfbe094eb5ee6fd"
+  version "1.0.4-fork8"
+  sha256 arm:   "54dd0ba544834f64cbd4b9d4ba2d982d3523fadce380ff258780b403123b6f1e",
+         intel: "975deb7b4c827f7bcbefca2b34b4d61655571aa91f9bb6fe79b91d90d5ca9ca3"
 
   url "https://github.com/tayuLuc/copyosity/releases/download/v#{version}/Copyosity-#{arch}_#{version}.dmg"
   name "Copyosity"
